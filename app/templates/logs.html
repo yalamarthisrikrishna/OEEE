@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Log</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .form-group input,
+        .form-group select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Log</h2>
+
+    <form id="addLogForm">
+        <div class="form-group">
+            <label for="cycle_no">Cycle No:</label>
+            <input type="text" id="cycle_no" name="cycle_no" required>
+        </div>
+        <div class="form-group">
+            <label for="unique_id">Unique ID:</label>
+            <input type="text" id="unique_id" name="unique_id" required>
+        </div>
+        <div class="form-group">
+            <label for="material_name">Material Name:</label>
+            <input type="text" id="material_name" name="material_name" required>
+        </div>
+        <div class="form-group">
+            <label for="machine">Machine:</label>
+            <select name="machine" id="machine" required>
+                <option value="">All Machines</option>
+                {% for machine in machines %}
+                    <option value="{{ machine.id }}">{{ machine.machine_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="start_time">Start Time:</label>
+            <input type="datetime-local" id="start_time" name="start_time" required>
+        </div>
+        <div class="form-group">
+            <label for="end_time">End Time:</label>
+            <input type="datetime-local" id="end_time" name="end_time" required>
+        </div>
+        <div class="form-group">
+            <label for="duration">Duration (hours):</label>
+            <input type="number" id="duration" name="duration" required>
+        </div>
+        <input type="submit" value="Add Log">
+    </form>
+</div>
+
+<script>
+    // JavaScript to handle form submission and API request
+    document.getElementById('addLogForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Convert form data to JSON
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Send POST request to API endpoint
+        fetch('add_log/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add log');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Log added successfully');
+            // Redirect to another page if needed
+            // window.location.href = '/logs/';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to add log');
+        });
+    });
+</script>
+
+</body>
+</html>

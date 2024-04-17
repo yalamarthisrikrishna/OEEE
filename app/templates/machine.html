@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Machine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .form-group input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Machine</h2>
+    <form id="addMachineForm" action="/machines/" method="post">
+<!--        {% csrf_token %}-->
+        <!-- Hidden input field for CSRF token -->
+<!--        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">-->
+        <div class="form-group">
+            <label for="machine_name">Machine Name:</label>
+            <input type="text" id="machine_name" name="machine_name" required>
+        </div>
+        <div class="form-group">
+            <label for="machine_serial_no">Machine Serial No:</label>
+            <input type="text" id="machine_serial_no" name="machine_serial_no" required>
+        </div>
+        <input type="submit" value="Add Machine">
+    </form>
+</div>
+
+<script>
+    // JavaScript to handle form submission and API request
+    document.getElementById('addMachineForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Convert form data to JSON
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Retrieve CSRF token from hidden input field
+<!--        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;-->
+
+        // Send POST request to API endpoint
+        fetch('machines/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+<!--                'X-CSRFToken': csrfToken // Include CSRF token in request headers-->
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add machine');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Machine added successfully');
+            // Redirect to another page if needed
+            // window.location.href = '/machines/';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to add machine');
+        });
+    });
+</script>
+
+</body>
+</html>

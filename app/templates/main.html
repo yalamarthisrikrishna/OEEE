@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machinery Logs</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: center; /* Center align text */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input[type="date"] {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="btn-container">
+    <!-- Buttons -->
+    <a href='machineview' class="btn">Add machine</a>
+    <a href='logsview' class="btn">Add log</a>
+</div>
+
+<h2>Machinery Logs</h2>
+
+<!-- Dropdowns -->
+<form id="filterForm" action="#" method="get">
+    <label for="machine">Select Machine:</label>
+    <select name="machine" id="machine">
+        <option value="">All Machines</option> <!-- Option to select all -->
+        {% for machine in machines %}
+            <option value="{{ machine.id }}">{{ machine.machine_name }}</option>
+        {% endfor %}
+    </select>
+    <label for="start_date">Select Start Date:</label>
+    <input type="date" name="start_date" id="start_date">
+    <label for="end_date">Select End Date:</label>
+    <input type="date" name="end_date" id="end_date">
+    <button type="button" id="filterBtn" class="btn">Filter</button> <!-- Use type="button" to prevent form submission -->
+</form>
+
+<table id="logsTable">
+    <thead>
+        <tr>
+            <th>Machine</th>
+            <th>OEE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in machinery_logs %}
+        <tr>
+            <td>{{ log.machine_name }}</td>
+            <td>{{ log.oee }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.getElementById('filterBtn').addEventListener('click', function() {
+        // Get form data
+        const formData = new FormData(document.getElementById('filterForm'));
+
+        // Convert form data to JSON object
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Fetch API endpoint with filter data in the body
+        fetch('/oee/filter/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+<!--                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token-->
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Update table with filtered data
+                const logsTableBody = document.querySelector('#logsTable tbody');
+                logsTableBody.innerHTML = ''; // Clear previous table data
+                data.forEach(log => {
+                    const row = `<tr><td>${log.machine_name}</td><td>${log.oee}</td></tr>`;
+                    logsTableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
+
+</body>
+</html>
