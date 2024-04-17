@@ -25,3 +25,7 @@ G
 app/templates/logs.html,5\c\5c26e297fb5e748deefa4713584171741e4a07df
 <
 app/tests.py,9\d\9d85f6a2c7721e984e380174678edc24d2a211ab
+9
+	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+@
+requirements.txt,1\9\19359a61ae2446b51b549167b014da2fcf265768
