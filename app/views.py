@@ -77,6 +77,9 @@ def calculate_oee_for_machine(machine):
     ideal_cycle_time = 5  # in minutes
     available_operating_time = total_products * (ideal_cycle_time / 60)  # convert minutes to hours
 
+    if available_operating_time == 0:
+        return 0
+
     # Calculate Unplanned Downtime
     unplanned_downtime = available_time_per_shift - available_operating_time
 
